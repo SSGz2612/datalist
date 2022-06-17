@@ -1,7 +1,9 @@
+import { data } from '../data/testData.js';
+import dataJsn from '../data/popupData.json';
+
 export const initialState = {
-    dataPopup: [
-        
-    ]
+    dataTxt: data,
+    dataJsn: dataJsn
 }
 
 export const updateData = (data) => {
@@ -16,7 +18,7 @@ const reducer = (state = initialState, action) => {
         case "UPDATE_DATA":
         return {
             ...state,
-            dataPopup: [ ...state.dataPopup, action.payload ]
+            dataJsn: [ ...state.dataJsn, action.payload ]
         }
 
         default: return state;

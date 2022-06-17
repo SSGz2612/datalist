@@ -68,3 +68,7 @@ form input {
 .setBtn {
   display: flex;
 }
+
+.comments {
+  min-width: 200px;
+}

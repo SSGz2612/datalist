@@ -10,39 +10,52 @@ import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import { Button } from "@mui/material";
+// redux
+import { connect } from 'react-redux/es/exports.js';
+import { updateData } from "../redux/reducer";
 // data
-import popupData from '../data/popupData.json';
+import { expresions } from '../data/expresions.js';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
     },
-
     '&:last-child td, &:last-child th': {
       border: 0,
     },
 }));
 
 function Popup(props){
-    const [ contacts, setContacts ] = useState(popupData);
-    
+    let valDate = new Date();
+    let today = `${valDate.getFullYear()}-${valDate.getMonth() === 0 ? valDate.getMonth() : '0'+valDate.getMonth()}-${valDate.getDate()}`;
+
     const [ userData, setUserData ] = useState({
         id: "",
+        date: today,
         user: "",
-        date: "",
         comment: ""
     });
 
     const addUserData = (e) => {
         e.preventDefault();
-
         const fName = e.target.getAttribute("name");
         const fValue = e.target.value;
 
-        const newValue = { ...userData };
-        newValue[fName] = fValue;
+        console.log(expresions.number.test(fValue)); // true tips number
+        console.log(fName === "id"); // true
 
-        setUserData(newValue);
+        if(expresions.number.test(fValue) && fName === "id" ){
+            e.preventDefault();
+
+            const newValue = { ...userData };
+            newValue[fName] = fValue;
+            setUserData(newValue);
+        } else { 
+            // generate a json
+            const newValue = { ...userData };
+            newValue[fName] = fValue;
+            setUserData(newValue);
+        }
     }
 
     const submitUser = (e) => {
@@ -55,9 +68,8 @@ function Popup(props){
             comment: userData.comment
         }
 
-        const newDUser = [ ...contacts, newUser ];
-        setContacts(newDUser);
-        console.log(contacts);
+        props.userData(newUser);
+        console.log(props.dataJsn);
     }
 
     return(props.trigger) ? (
@@ -86,8 +98,8 @@ function Popup(props){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                { contacts.map((key) => (
-                                <StyledTableRow className='cursor' key={key.id}>
+                                { props.dataJsn.map((key) => (
+                                <StyledTableRow key={key.id}>
                                     <TableCell component="th" scope="row">{key.id}</TableCell>
 
                                     <TableCell align="center">{ key.date }</TableCell>
@@ -101,10 +113,10 @@ function Popup(props){
                                     <TableCell component="th" scope="row" colSpan={4}>
                                         <form onSubmit={ submitUser }>
                                             <div className="setIpt">
-                                                <input type="text" name="id" onChange={ addUserData }></input>
-                                                <input type="date" name="date" onChange={ addUserData }></input>
-                                                <input type="text" name="user" onChange={ addUserData }></input>
-                                                <input type="text" name="comment" onChange={ addUserData }></input>
+                                                <input placeholder="ID" type="text" name="id" onChange={ addUserData }></input>
+                                                <input type="date" name="date" onChange={ addUserData } value={today}></input>
+                                                <input placeholder="Name" type="text" name="user" onChange={ addUserData }></input>
+                                                <input placeholder="Comments..." type="text" name="comment" onChange={ addUserData }></input>
                                             </div>
 
                                             <div className="setBtn">
@@ -123,4 +135,16 @@ function Popup(props){
     ) : "";
 }
 
-export default Popup;
+const mapStateToProps = state => {
+    return {
+        dataJsn: state.dataJsn
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        userData: (data) => dispatch(updateData(data))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Popup);
