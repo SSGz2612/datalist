@@ -13,8 +13,6 @@ import { Button } from "@mui/material";
 // redux
 import { connect } from 'react-redux/es/exports.js';
 import { updateData } from "../redux/reducer";
-// data
-import { expresions } from '../data/expresions.js';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -26,11 +24,14 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function Popup(props){
+    // date
     let valDate = new Date();
     let today = `${valDate.getFullYear()}-${valDate.getMonth() === 0 ? valDate.getMonth() : '0'+valDate.getMonth()}-${valDate.getDate()}`;
+    // id number
+    const [ num, setNum ] = useState(Number);
 
     const [ userData, setUserData ] = useState({
-        id: "",
+        id: "0" || num,
         date: today,
         user: "",
         comment: ""
@@ -41,16 +42,13 @@ function Popup(props){
         const fName = e.target.getAttribute("name");
         const fValue = e.target.value;
 
-        console.log(expresions.number.test(fValue)); // true tips number
-        console.log(fName === "id"); // true
-
-        if(expresions.number.test(fValue) && fName === "id" ){
-            e.preventDefault();
+        if( fName === "id" ){
+            setNum(e.target.value.replace(/\D/g, ''))
 
             const newValue = { ...userData };
             newValue[fName] = fValue;
             setUserData(newValue);
-        } else { 
+        } else {
             // generate a json
             const newValue = { ...userData };
             newValue[fName] = fValue;
@@ -68,8 +66,10 @@ function Popup(props){
             comment: userData.comment
         }
 
-        props.userData(newUser);
-        console.log(props.dataJsn);
+        props.userData({
+            fromCity: props.cityName,
+            newUser: newUser
+        });
     }
 
     return(props.trigger) ? (
@@ -86,7 +86,7 @@ function Popup(props){
                                         colSpan={4}
                                         align="center"
                                     >
-                                        <b>Regions</b>
+                                        <b>{ props.cityName }</b>
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
@@ -98,7 +98,25 @@ function Popup(props){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                { props.dataJsn.map((key) => (
+                                { props.cityName === "Kyivska" && props.dataJsn[0].map((key) => (
+                                <StyledTableRow key={key.id}>
+                                    <TableCell component="th" scope="row">{key.id}</TableCell>
+
+                                    <TableCell align="center">{ key.date }</TableCell>
+                                    <TableCell align="center">{ key.user }</TableCell>
+                                    <TableCell align="center">{ key.comment }</TableCell>
+                                </StyledTableRow>
+                                ))}
+                                { props.cityName === "Odeska" && props.dataJsn[1].map((key) => (
+                                <StyledTableRow key={key.id}>
+                                    <TableCell component="th" scope="row">{key.id}</TableCell>
+
+                                    <TableCell align="center">{ key.date }</TableCell>
+                                    <TableCell align="center">{ key.user }</TableCell>
+                                    <TableCell align="center">{ key.comment }</TableCell>
+                                </StyledTableRow>
+                                ))}
+                                { props.cityName === "Lvivska" && props.dataJsn[2].map((key) => (
                                 <StyledTableRow key={key.id}>
                                     <TableCell component="th" scope="row">{key.id}</TableCell>
 
@@ -113,7 +131,7 @@ function Popup(props){
                                     <TableCell component="th" scope="row" colSpan={4}>
                                         <form onSubmit={ submitUser }>
                                             <div className="setIpt">
-                                                <input placeholder="ID" type="text" name="id" onChange={ addUserData }></input>
+                                                <input type="text" name="id" onChange={ addUserData } value={num}></input>
                                                 <input type="date" name="date" onChange={ addUserData } value={today}></input>
                                                 <input placeholder="Name" type="text" name="user" onChange={ addUserData }></input>
                                                 <input placeholder="Comments..." type="text" name="comment" onChange={ addUserData }></input>
@@ -137,7 +155,8 @@ function Popup(props){
 
 const mapStateToProps = state => {
     return {
-        dataJsn: state.dataJsn
+        dataJsn: state.dataJsn,
+        cityName: state.cityName
     }
 }
 

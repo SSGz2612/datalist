@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 // redux
 import { connect } from 'react-redux/es/exports.js';
+import { dataOfCity } from '../redux/reducer.js';
 // popup
 import Popup from './Popup.js';
 
@@ -27,8 +28,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function Datalist(props){
     const [ butPop, setButPop ] = useState(false);
 
-    const handleCityData = (e) => {
-        console.log(e);
+    const handleCity = (v) => {
+        props.nameCity(v);
+        setButPop(true);
     }
 
     return (
@@ -61,36 +63,36 @@ function Datalist(props){
                     </TableHead>
                     <TableBody>
                         { Object.keys(props.dataUser).map((key) => (
-                        <StyledTableRow className='cursor' onClick={() => setButPop(true)} key={key}>
+                        <StyledTableRow className='cursor' onClick={() => handleCity(key)} key={key}>
                             <TableCell component="th" scope="row">{key}</TableCell>
                             <TableCell align="center">
-                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].XX.value + '/\n' + props.dataUser[key].G[2017].XX.dateRelease }
+                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].XX.dateRelease + '/\n' + props.dataUser[key].G[2017].XX.value }
                             </TableCell>
                             <TableCell align="center">
-                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].YY.value + '/\n' + props.dataUser[key].G[2017].YY.dateRelease }
+                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].YY.dateRelease + '/\n' + props.dataUser[key].G[2017].YY.value }
                             </TableCell>
                             <TableCell align="center">
-                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].ZZ.value + '/\n' + props.dataUser[key].G[2017].ZZ.dateRelease }
-                            </TableCell>
-                            
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].XX.value + '/\n' + props.dataUser[key].G[2018].XX.dateRelease }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].YY.value + '/\n' + props.dataUser[key].G[2018].YY.dateRelease }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].ZZ.value + '/\n' + props.dataUser[key].G[2018].ZZ.dateRelease }
+                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].ZZ.dateRelease + '/\n' + props.dataUser[key].G[2017].ZZ.value }
                             </TableCell>
                             
                             <TableCell align="center">
-                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].XX.value + '/\n' + props.dataUser[key].G[2019].XX.dateRelease }
+                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].XX.dateRelease + '/\n' + props.dataUser[key].G[2018].XX.value }
                             </TableCell>
                             <TableCell align="center">
-                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].YY.value + '/\n' + props.dataUser[key].G[2019].YY.dateRelease }
+                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].YY.dateRelease + '/\n' + props.dataUser[key].G[2018].YY.value }
                             </TableCell>
                             <TableCell align="center">
-                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].ZZ.value + '/\n' + props.dataUser[key].G[2019].ZZ.dateRelease }
+                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].ZZ.dateRelease + '/\n' + props.dataUser[key].G[2018].ZZ.value }
+                            </TableCell>
+                            
+                            <TableCell align="center">
+                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].XX.dateRelease + '/\n' + props.dataUser[key].G[2019].XX.value }
+                            </TableCell>
+                            <TableCell align="center">
+                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].YY.dateRelease + '/\n' + props.dataUser[key].G[2019].YY.value }
+                            </TableCell>
+                            <TableCell align="center">
+                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].ZZ.dateRelease + '/\n' + props.dataUser[key].G[2019].ZZ.value }
                             </TableCell>
                         </StyledTableRow>
                         ))}
@@ -103,10 +105,16 @@ function Datalist(props){
   );
 }
 
+const mapDispatchToProps = dispatch => {
+    return {
+        nameCity: (data) => dispatch(dataOfCity(data))
+    }
+}
+
 const mapStateToProps = state => {
     return {
         dataUser: state.dataTxt
     }
 }
 
-export default connect(mapStateToProps, null)(Datalist);
+export default connect(mapStateToProps, mapDispatchToProps)(Datalist);
