@@ -26,21 +26,27 @@ const reducer = (state = initialState, action) => {
         case "UPDATE_DATA":
             console.log( "city cell: " + action.payload.fromCity );
             console.log( action.payload.newUser );
-        return action.payload.fromCity === "Kyivska" ? {
+
+            let city = "";
+            let numer = 0;
+
+            if( action.payload.fromCity === "Kyivska" ){
+                city = "Kyivska";
+                numer = 0;
+            } else if( action.payload.fromCity === "Odeska" ){
+                city = "Odeska";
+                numer = 1;
+            } else if( action.payload.fromCity === "Lvivska" ){
+                city = "Lvivska";
+                numer = 2;
+            }
+
+        return action.payload.fromCity === city ? {
             ...state,
-            dataJsn: state.dataJsn.map((cont, i) => i === 0 ?
+            dataJsn: state.dataJsn.map((cont, i) => i === numer ?
                 [...cont, action.payload.newUser]
              : cont )
-        } : action.payload.fromCity === "Odeska" ? {
-            ...state,
-            dataJsn: state.dataJsn.map((cont, i) => i === 1 ?
-                [...cont, action.payload.newUser]
-             : cont )
-        } : {
-            dataJsn: state.dataJsn.map((cont, i) => i === 2 ?
-                [...cont, action.payload.newUser]
-             : cont )
-        }
+        } : undefined
 
         case "CITY_NAME":
         return {
