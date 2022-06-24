@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // material UI
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,8 +12,6 @@ import Paper from '@mui/material/Paper';
 // redux
 import { connect } from 'react-redux/es/exports.js';
 import { dataOfCity } from '../redux/reducer.js';
-// popup
-import Popup from './Popup.js';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -26,12 +24,61 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function Datalist(props){
-    const [ butPop, setButPop ] = useState(false);
+    const [ year, setYear ] = useState([]);
+    const [ titleCell, setTitleCell ] = useState([]);
 
-    const handleCity = (v) => {
-        props.nameCity(v);
-        setButPop(true);
+    const handleDataCell = (city, year, title) => {
+        console.log(city, year, title);
+        props.nameCity(city);
+
+        var windowBehavior = null;
+        
+        if(windowBehavior == null || windowBehavior.closed){
+            windowBehavior = window.open("http://localhost:3000/popup", "_blank", "status=no,location=no,left=200,top=100,width=900,height=700,toolbar=no,resizable=no");
+        }
     }
+
+    // get the year from object data
+    useEffect(() => {
+        let arr = [];
+        let gyear = Object.keys(props.dataUser).map((k) =>
+            Object.keys(props.dataUser[k].G) // get arrays of cities from object data
+        )
+        
+        for(let i = 0; i < gyear.length; i++){
+            arr = arr.concat(gyear[i])
+        }
+        
+        let i = arr.filter((i, index) => {
+            return arr.indexOf(i) === index;
+        })
+        
+        setYear(i);
+    }, [props.dataUser]);
+
+    // get the titles for each year from object data
+    useEffect(() => {
+        let arr = [];
+        const x = Object.keys(props.dataUser).map((k) =>
+            props.dataUser[k].G
+        );
+
+        for(let j = 0; j < year.length; j++){
+            for(let i = 0; i < x.length; i++){
+                if(Object.keys(x[i]).includes(year[j]) === false){
+                    continue;
+                } else {
+                    arr = arr.concat(Object.keys(x[i][year[j]]));
+                }
+            }
+        }
+
+        let i = arr.filter((i, index) => {
+            return arr.indexOf(i) === index;
+        })
+
+        setTitleCell(i);        
+    }, [props.dataUser, year]);
 
     return (
         <div className='principal'>
@@ -40,69 +87,45 @@ function Datalist(props){
                     <TableHead>
                         <TableRow>
                             <TableCell></TableCell>
-                            <TableCell align="center" colSpan={3}><b>2017</b></TableCell>
-                            <TableCell align="center" colSpan={3}><b>2018</b></TableCell>
-                            <TableCell align="center" colSpan={3}><b>2019</b></TableCell>
+                            { year.map((x, index) =>
+                                <TableCell key={index} align="center" colSpan={3}><b>{x}</b></TableCell>
+                            )}
                         </TableRow>
 
                         <TableRow>
                             <TableCell component="th" scope="row"><b>Regions</b></TableCell>
-                            
-                            <TableCell align="center">XX</TableCell>
-                            <TableCell align="center">YY</TableCell>
-                            <TableCell align="center">ZZ</TableCell>
-                            
-                            <TableCell align="center">XX</TableCell>
-                            <TableCell align="center">YY</TableCell>
-                            <TableCell align="center">ZZ</TableCell>
-                            
-                            <TableCell align="center">XX</TableCell>
-                            <TableCell align="center">YY</TableCell>
-                            <TableCell align="center">ZZ</TableCell>
+                            { year.map(() =>
+                                titleCell.map((x, index) =>
+                                    <TableCell align="center" key={index}>{x}</TableCell>
+                                )
+                            )}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        { Object.keys(props.dataUser).map((key) => (
-                        <StyledTableRow className='cursor' onClick={() => handleCity(key)} key={key}>
-                            <TableCell component="th" scope="row">{key}</TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].XX.dateRelease + '/\n' + props.dataUser[key].G[2017].XX.value }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].YY.dateRelease + '/\n' + props.dataUser[key].G[2017].YY.value }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2017] === undefined ? "-" : props.dataUser[key].G[2017].ZZ.dateRelease + '/\n' + props.dataUser[key].G[2017].ZZ.value }
-                            </TableCell>
-                            
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].XX.dateRelease + '/\n' + props.dataUser[key].G[2018].XX.value }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].YY.dateRelease + '/\n' + props.dataUser[key].G[2018].YY.value }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2018] === undefined ? "-" : props.dataUser[key].G[2018].ZZ.dateRelease + '/\n' + props.dataUser[key].G[2018].ZZ.value }
-                            </TableCell>
-                            
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].XX.dateRelease + '/\n' + props.dataUser[key].G[2019].XX.value }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].YY.dateRelease + '/\n' + props.dataUser[key].G[2019].YY.value }
-                            </TableCell>
-                            <TableCell align="center">
-                                { props.dataUser[key].G[2019] === undefined ? "-" : props.dataUser[key].G[2019].ZZ.dateRelease + '/\n' + props.dataUser[key].G[2019].ZZ.value }
-                            </TableCell>
-                        </StyledTableRow>
+                        {Object.keys(props.dataUser).map((key) => (
+                            <StyledTableRow key={ key }>
+                                <TableCell component="th" scope="row"><b>{ key }</b></TableCell>
+                                { year.map((y) =>
+                                    titleCell.map((x, index) =>
+                                        <TableCell
+                                            align="left"
+                                            key={index}
+                                            sx={{ fontSize: 11 }}
+                                            className='cursor'
+                                            onClick={() => handleDataCell(key, y, x)}
+                                        >
+                                            <span>Value: {props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].value}</span>
+                                            <span>Date: {props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].dateRelease}</span>
+                                        </TableCell>
+                                    )
+                                )}
+                            </StyledTableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-
-            <Popup trigger={butPop} setTrigger={setButPop}/>
         </div>
-  );
+    );
 }
 
 const mapDispatchToProps = dispatch => {
@@ -113,7 +136,8 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
     return {
-        dataUser: state.dataTxt
+        dataUser: state.dataTxt,
+        dataWindow: state.windowBehavior
     }
 }
 

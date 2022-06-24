@@ -13,6 +13,8 @@ import { Button } from "@mui/material";
 // redux
 import { connect } from 'react-redux/es/exports.js';
 import { updateData } from "../redux/reducer";
+// browser-router
+import { Link } from "react-router-dom";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -70,9 +72,31 @@ function Popup(props){
             fromCity: props.cityName,
             newUser: newUser
         });
+
+        // generateID();
     }
 
-    return(props.trigger) ? (
+    const toClose = () => {
+        window.close();
+    }
+
+    // const generateID = () => {
+    //     // console.log(userData.id); // init 0
+    //     let numer = 0;
+
+    //     if( props.cityName === "Kyivska" ){
+    //         numer = 0;
+    //         console.log(props.dataJsn[numer].id);
+    //     } else if( props.cityName === "Odeska" ){
+    //         numer = 1;
+    //         console.log(props.dataJsn[numer].id);
+    //     } else if( props.cityName === "Lvivska" ){
+    //         numer = 2;
+    //         console.log(props.dataJsn[numer].id);
+    //     }
+    // }
+
+    return(
         <div className="containerPopup">
             <div className="popup">
                 <div className='principal'>
@@ -98,15 +122,7 @@ function Popup(props){
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                { props.cityName === "Kyivska" && props.dataJsn[0].map((key) => (
-                                <StyledTableRow key={key.id}>
-                                    <TableCell component="th" scope="row">{key.id}</TableCell>
-
-                                    <TableCell align="center">{ key.date }</TableCell>
-                                    <TableCell align="center">{ key.user }</TableCell>
-                                    <TableCell align="center">{ key.comment }</TableCell>
-                                </StyledTableRow>
-                                ))}
+                                { props.cityName }
                                 { props.cityName === "Odeska" && props.dataJsn[1].map((key) => (
                                 <StyledTableRow key={key.id}>
                                     <TableCell component="th" scope="row">{key.id}</TableCell>
@@ -139,7 +155,9 @@ function Popup(props){
 
                                             <div className="setBtn">
                                                 <Button variant="contained" size="small" type="submit">Add</Button>
-                                                <Button variant="outlined" size="small" onClick={() => props.setTrigger(false)}>Close</Button>
+                                                <Link className="btn" to="/" onClick={ toClose }>
+                                                    <Button variant="outlined" size="small">Close</Button>
+                                                </Link>
                                             </div>
                                         </form>
                                     </TableCell>
@@ -150,7 +168,7 @@ function Popup(props){
                 </div>
             </div>
         </div>
-    ) : "";
+    );
 }
 
 const mapStateToProps = state => {

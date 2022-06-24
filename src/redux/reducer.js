@@ -4,7 +4,7 @@ import dataJsn from '../data/popupData.json';
 export const initialState = {
     dataTxt: data,
     dataJsn: dataJsn,
-    cityName: ""
+    cityName: "",
 }
 
 export const updateData = (data) => {
