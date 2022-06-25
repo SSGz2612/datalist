@@ -46,13 +46,17 @@ function Popup(props){
         e.preventDefault();
         const fName = e.target.getAttribute("name");
         let fValue = e.target.value;
+        
         // generate the ID unique
+        setUserData({id: 1});
+        console.log(userData);
         if( fName === "id" ){
             setNum(e.target.value.replace(/\D/g, ''));
             if(isNaN(fValue)){
                 fValue = 1;
             }
             let numInArray = props.dataJsn.map((x) => x.id);
+            console.log(numInArray);
             while(numInArray.includes(parseInt(fValue))){
                 fValue++;
             }
@@ -70,6 +74,22 @@ function Popup(props){
 
     const submitUser = (e) => {
         e.preventDefault();
+
+        setUserData({id: 1});
+        console.log(userData);
+
+        if(isNaN(userData.id)){
+            setUserData({id: 1});
+        }
+        let numInArray = props.dataJsn.map((x) => x.id);
+        console.log(numInArray);
+        
+        while(numInArray.includes(parseInt(userData.id))){
+            setUserData(userData.id++);
+        }
+
+        const newValue = { ...userData };
+        setUserData(newValue);
 
         const newUser = {
             id: userData.id,
