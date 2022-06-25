@@ -4,7 +4,7 @@ import dataJsn from '../data/popupData.json';
 export const initialState = {
     dataTxt: data,
     dataJsn: dataJsn,
-    cityName: "",
+    cityName: []
 }
 
 export const updateData = (data) => {
@@ -24,29 +24,24 @@ export const dataOfCity = (data) => {
 const reducer = (state = initialState, action) => {
     switch(action.type){
         case "UPDATE_DATA":
-            console.log( "city cell: " + action.payload.fromCity );
-            console.log( action.payload.newUser );
-
-            let city = "";
-            let numer = 0;
-
-            if( action.payload.fromCity === "Kyivska" ){
-                city = "Kyivska";
-                numer = 0;
-            } else if( action.payload.fromCity === "Odeska" ){
-                city = "Odeska";
-                numer = 1;
-            } else if( action.payload.fromCity === "Lvivska" ){
-                city = "Lvivska";
-                numer = 2;
-            }
-
-        return action.payload.fromCity === city ? {
+            let namecell = action.payload.fromCity[0] + action.payload.fromCity[1] + action.payload.fromCity[2];
+            // let namecellfrom = state.cityName[0] + state.cityName[1] + state.cityName[2];
+            
+            // console.log(state.cityName); // Kyiv 2018 XX
+            // console.log(action.payload.newUser);
+            // console.log(state.dataJsn);
+            // console.log(state.dataJsn.filter((x) => (x.namecell === namecell) || (x.namecell === undefined) ? x : null))
+        return {
             ...state,
-            dataJsn: state.dataJsn.map((cont, i) => i === numer ?
-                [...cont, action.payload.newUser]
-             : cont )
-        } : undefined
+            dataJsn: [...state.dataJsn, {...action.payload.newUser, namecell: namecell}]
+        }
+
+        // return action.payload.fromCity === city ? {
+        //     ...state,
+        //     dataJsn: state.dataJsn.map((cont, i) => i === numer ?
+        //         [...cont, action.payload.newUser]
+        //      : cont )
+        // } : undefined
 
         case "CITY_NAME":
         return {

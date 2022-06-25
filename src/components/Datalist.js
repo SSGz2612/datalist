@@ -11,7 +11,7 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 // redux
 import { connect } from 'react-redux/es/exports.js';
-import { dataOfCity } from '../redux/reducer.js';
+import { dataOfCity } from '../redux';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -28,14 +28,19 @@ function Datalist(props){
     const [ titleCell, setTitleCell ] = useState([]);
 
     const handleDataCell = (city, year, title) => {
-        console.log(city, year, title);
-        props.nameCity(city);
+        // console.log(city, year, title);
+        props.nameCity([city, year, title]);
 
-        var windowBehavior = null;
+        let windowBehavior = window.open("/popup",
+            "rating",
+            "status=no,location=no,left=200,top=100,width=900,height=700,scrollbars=yes"
+        );
+        windowBehavior.focus();
         
-        if(windowBehavior == null || windowBehavior.closed){
-            windowBehavior = window.open("http://localhost:3000/popup", "_blank", "status=no,location=no,left=200,top=100,width=900,height=700,toolbar=no,resizable=no");
-        }
+        windowBehavior.onload = function() {
+            let html = `<div class="titlePop"><b>${city} ${year} ${title}</b><div>`;
+            windowBehavior.document.body.insertAdjacentHTML('afterbegin', html);
+        };
     }
 
     // get the year from object data
@@ -46,7 +51,7 @@ function Datalist(props){
         )
         
         for(let i = 0; i < gyear.length; i++){
-            arr = arr.concat(gyear[i])
+            arr = arr.concat(gyear[i]);
         }
         
         let i = arr.filter((i, index) => {
@@ -114,8 +119,9 @@ function Datalist(props){
                                             className='cursor'
                                             onClick={() => handleDataCell(key, y, x)}
                                         >
-                                            <span>Value: {props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].value}</span>
-                                            <span>Date: {props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].dateRelease}</span>
+                                            <span><b>Value:</b> {props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].value}</span>
+                                            <span><b>Date:</b></span>
+                                            <span>{props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].dateRelease}</span>
                                         </TableCell>
                                     )
                                 )}
@@ -137,7 +143,8 @@ const mapDispatchToProps = dispatch => {
 const mapStateToProps = state => {
     return {
         dataUser: state.dataTxt,
-        dataWindow: state.windowBehavior
+        dataJsn: state.dataJsn,
+        cityName: state.cityName
     }
 }
 

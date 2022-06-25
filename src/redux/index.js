@@ -1,2 +1,2 @@
-import { updateData } from "./reducer";
-import { dataOfCity } from "./reducer";
+export { updateData } from "./reducer";
+export { dataOfCity } from "./reducer";

@@ -1,50 +1,20 @@
 [
-    [{
+    {
         "id": 1,
         "date": "2022-02-20",
         "user": "Petro",
         "comment": "Any"
-    },{
+    },
+    {
         "id": 2,
         "date": "2022-02-21",
         "user": "Roman",
         "comment": ""
-    },{
+    },
+    {
         "id": 3,
         "date": "2022-02-22",
         "user": "Anna",
         "comment": ""
-    }],
-    [{
-        "id": 1,
-        "date": "2022-02-20",
-        "user": "Petro",
-        "comment": "Any"
-    },{
-        "id": 2,
-        "date": "2022-02-21",
-        "user": "Roman",
-        "comment": ""
-    },{
-        "id": 3,
-        "date": "2022-02-22",
-        "user": "Anna",
-        "comment": ""
-    }],
-    [{
-        "id": 1,
-        "date": "2022-02-20",
-        "user": "Petro",
-        "comment": "Any"
-    },{
-        "id": 2,
-        "date": "2022-02-21",
-        "user": "Roman",
-        "comment": ""
-    },{
-        "id": 3,
-        "date": "2022-02-22",
-        "user": "Anna",
-        "comment": ""
-    }]
+    }
 ]

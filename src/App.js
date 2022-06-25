@@ -9,16 +9,16 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 function App(){
   return (
-    <Provider store={ store }>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Provider store={ store }>
           <div className="App">
             <Switch>
               <Route exact path="/" component={ Datalist }/>
               <Route path="/popup" component={ Popup }/>
             </Switch>
           </div>
-      </BrowserRouter>
-    </Provider>
+      </Provider>
+    </BrowserRouter>
   );
 }
 

@@ -9,7 +9,6 @@ body {
 
 .principal {
   display: flex;
-  z-index: 0;
   margin: 0;
   width: 100%;
   height: 100%;
@@ -26,26 +25,12 @@ body {
   cursor: pointer;
 }
 
-.containerPopup {
+.popup {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2;
-}
-
-.popup {
-  display: flex;
-  width: 800px;
-  height: auto;
-  max-height: 500px;
-  background-color: #FFF;
-  z-index: 3;
-  border-radius: 3px;
-  overflow-y: scroll;
 }
 
 form {
@@ -77,4 +62,12 @@ span {
 
 .btn {
   text-decoration: none;
+}
+
+.titlePop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  border-bottom: 2px solid brown;
 }
