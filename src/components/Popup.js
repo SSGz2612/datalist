@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import '../App.css';
 // material UI
 import Table from '@mui/material/Table';
@@ -12,7 +12,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from "@mui/material";
 // redux
 import { connect } from "react-redux/es/exports.js";
-import { updateData } from "../redux/reducer.js";
+import { updateData, updateTxt } from "../redux/reducer.js";
 // browser-router
 import { Link } from "react-router-dom";
 
@@ -34,7 +34,6 @@ function Popup(props){
     }`;
     // id number
     const [ num, setNum ] = useState(Number);
-
     const [ userData, setUserData ] = useState({
         id: 0,
         date: today,
@@ -42,30 +41,45 @@ function Popup(props){
         comment: ""
     });
 
+    const [ cityTitle, setCityTitle ] = useState([])
+
+    useEffect(() => {
+        setCityTitle(JSON.parse(localStorage.getItem("cityName")));
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("dataTxt", JSON.stringify(props.txtData));
+        localStorage.setItem("dataJsn", JSON.stringify(props.dataJsn));
+    }, [props.txtData, props.dataJsn]);
+
     const addUserData = (e) => {
         e.preventDefault();
         const fName = e.target.getAttribute("name");
         let fValue = e.target.value;
         
         // generate the ID unique
-        setUserData({id: 1});
         console.log(userData);
+        if(isNaN(userData.id)){
+            setUserData({id: 1});
+        }
+
         if( fName === "id" ){
             setNum(e.target.value.replace(/\D/g, ''));
-            if(isNaN(fValue)){
-                fValue = 1;
+            setUserData({id: 1});
+        
+            if(isNaN(userData.id)){
+                setUserData({id: 1});
             }
+            
             let numInArray = props.dataJsn.map((x) => x.id);
             console.log(numInArray);
             while(numInArray.includes(parseInt(fValue))){
                 fValue++;
             }
-
             const newValue = { ...userData };
             newValue[fName] = parseInt(fValue);
             setUserData(newValue);
         } else {
-            // generate a json
             const newValue = { ...userData };
             newValue[fName] = fValue;
             setUserData(newValue);
@@ -75,15 +89,14 @@ function Popup(props){
     const submitUser = (e) => {
         e.preventDefault();
 
-        setUserData({id: 1});
         console.log(userData);
-
         if(isNaN(userData.id)){
             setUserData({id: 1});
         }
+
+        setUserData({id: 1});
+
         let numInArray = props.dataJsn.map((x) => x.id);
-        console.log(numInArray);
-        
         while(numInArray.includes(parseInt(userData.id))){
             setUserData(userData.id++);
         }
@@ -98,9 +111,27 @@ function Popup(props){
             comment: userData.comment
         }
 
+        if(isNaN(newUser.id)){
+            newUser.id = 1;
+            
+            let numInArray = props.dataJsn.map((x) => x.id);
+            while(numInArray.includes(newUser.id)){
+            newUser.id++;
+            }
+            console.log(newUser.id);
+        }
+
+        // keep data in localStorage
+        localStorage.setItem("newUser", JSON.stringify(newUser));
+        
         props.userData({
-            fromCity: props.cityName,
-            newUser: newUser
+            fromCity: JSON.parse(localStorage.getItem("cityName")),
+            newUser: JSON.parse(localStorage.getItem("newUser"))
+        });
+
+        props.dataTxt({
+            fromCity: JSON.parse(localStorage.getItem("cityName")),
+            id: JSON.parse(localStorage.getItem("newUser")).id
         });
     }
 
@@ -113,6 +144,16 @@ function Popup(props){
             <TableContainer sx={{ margin: 0, width: 1, height: 1 }} component={ Paper }>
                 <Table aria-label="simple table">
                     <TableHead>
+                        <TableRow>
+                            <TableCell
+                                component="th"
+                                scope="row"
+                                colSpan={4}
+                                align="center"
+                            >
+                                <b>{cityTitle.city} {cityTitle.year} {cityTitle.title}</b>
+                            </TableCell>
+                        </TableRow>
                         <TableRow>
                             <TableCell component="th" scope="row"><b>Value</b></TableCell>
                             
@@ -137,7 +178,7 @@ function Popup(props){
                             <TableCell component="th" scope="row" colSpan={4}>
                                 <form onSubmit={ submitUser }>
                                     <div className="setIpt">
-                                        <input type="text" name="id" onChange={ addUserData } value={num}></input>
+                                        <input id="idNumber" type="text" name="id" onChange={ addUserData } value={num}></input>
                                         <input type="date" name="date" onChange={ addUserData } value={today}></input>
                                         <input placeholder="Name" type="text" name="user" onChange={ addUserData }></input>
                                         <input placeholder="Comments..." type="text" name="comment" onChange={ addUserData }></input>
@@ -162,13 +203,14 @@ function Popup(props){
 const mapStateToProps = state => {
     return {
         dataJsn: state.dataJsn,
-        cityName: state.cityName
+        txtData: state.dataTxt
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        userData: (data) => dispatch(updateData(data))
+        userData: (data) => dispatch(updateData(data)),
+        dataTxt: (data) => dispatch(updateTxt(data))
     }
 }
 

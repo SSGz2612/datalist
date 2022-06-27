@@ -71,3 +71,7 @@ span {
   height: 50px;
   border-bottom: 2px solid brown;
 }
+
+.idColor {
+  color: brown;
+}

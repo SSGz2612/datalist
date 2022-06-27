@@ -11,7 +11,7 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 // redux
 import { connect } from 'react-redux/es/exports.js';
-import { dataOfCity } from '../redux';
+import { updateTxt } from '../redux';
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
@@ -26,28 +26,38 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function Datalist(props){
     const [ year, setYear ] = useState([]);
     const [ titleCell, setTitleCell ] = useState([]);
+    const [ arrCell, setArrCell ] = useState({
+        city: "",
+        year: "",
+        title: ""
+    });
+
+    useEffect(() => {
+        localStorage.setItem("cityName", JSON.stringify(arrCell));
+        localStorage.setItem("dataTxt", JSON.stringify(props.txtData));
+        localStorage.setItem("dataJsn", JSON.stringify(props.dataJsn));
+    }, [props.txtData, props.dataJsn, arrCell]);
 
     const handleDataCell = (city, year, title) => {
-        // console.log(city, year, title);
-        props.nameCity([city, year, title]);
+        const newValue = { ...arrCell };
+        newValue['city'] = city;
+        newValue['year'] = year;
+        newValue['title'] = title;
 
+        setArrCell(newValue);
+        
         let windowBehavior = window.open("/popup",
             "rating",
             "status=no,location=no,left=200,top=100,width=900,height=700,scrollbars=yes"
         );
         windowBehavior.focus();
-        
-        windowBehavior.onload = function() {
-            let html = `<div class="titlePop"><b>${city} ${year} ${title}</b><div>`;
-            windowBehavior.document.body.insertAdjacentHTML('afterbegin', html);
-        };
     }
 
-    // get the year from object data
+    // table - get the year from object data
     useEffect(() => {
         let arr = [];
-        let gyear = Object.keys(props.dataUser).map((k) =>
-            Object.keys(props.dataUser[k].G) // get arrays of cities from object data
+        let gyear = Object.keys(props.txtData).map((k) =>
+            Object.keys(props.txtData[k].G) // get arrays of cities from object data
         )
         
         for(let i = 0; i < gyear.length; i++){
@@ -59,13 +69,13 @@ function Datalist(props){
         })
         
         setYear(i);
-    }, [props.dataUser]);
+    }, [props.txtData]);
 
-    // get the titles for each year from object data
+    // table - get the titles for each year from object data
     useEffect(() => {
         let arr = [];
-        const x = Object.keys(props.dataUser).map((k) =>
-            props.dataUser[k].G
+        const x = Object.keys(props.txtData).map((k) =>
+            props.txtData[k].G
         );
 
         for(let j = 0; j < year.length; j++){
@@ -83,7 +93,7 @@ function Datalist(props){
         })
 
         setTitleCell(i);        
-    }, [props.dataUser, year]);
+    }, [props.txtData, year]);
 
     return (
         <div className='principal'>
@@ -107,7 +117,7 @@ function Datalist(props){
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.keys(props.dataUser).map((key) => (
+                        {Object.keys(props.txtData).map((key) => (
                             <StyledTableRow key={ key }>
                                 <TableCell component="th" scope="row"><b>{ key }</b></TableCell>
                                 { year.map((y) =>
@@ -119,9 +129,14 @@ function Datalist(props){
                                             className='cursor'
                                             onClick={() => handleDataCell(key, y, x)}
                                         >
-                                            <span><b>Value:</b> {props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].value}</span>
+                                            <span><b>Value:</b> {props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].value}</span>
                                             <span><b>Date:</b></span>
-                                            <span>{props.dataUser[key].G[y] === undefined ? "-" : props.dataUser[key].G[y][x].dateRelease}</span>
+                                            <span>{props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].dateRelease}</span>
+
+                                            <span>{props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].id}</span>
+                                            {  }
+                                            {/* {JSON.parse(localStorage.getItem("dataTxt"))[key].G[y] === undefined ?
+                                            <span className='idColor'><b>Id:</b></span> : undefined} */}
                                         </TableCell>
                                     )
                                 )}
@@ -136,15 +151,14 @@ function Datalist(props){
 
 const mapDispatchToProps = dispatch => {
     return {
-        nameCity: (data) => dispatch(dataOfCity(data))
+        dataTxt: (data) => dispatch(updateTxt(data))
     }
 }
 
 const mapStateToProps = state => {
     return {
-        dataUser: state.dataTxt,
-        dataJsn: state.dataJsn,
-        cityName: state.cityName
+        txtData: state.dataTxt,
+        dataJsn: state.dataJsn
     }
 }
 

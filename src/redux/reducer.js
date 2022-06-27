@@ -3,8 +3,7 @@ import dataJsn from '../data/popupData.json';
 
 export const initialState = {
     dataTxt: data,
-    dataJsn: dataJsn,
-    cityName: []
+    dataJsn: dataJsn
 }
 
 export const updateData = (data) => {
@@ -14,9 +13,9 @@ export const updateData = (data) => {
     }
 }
 
-export const dataOfCity = (data) => {
+export const updateTxt = (data) => {
     return {
-        type: "CITY_NAME",
+        type: "UPDATE_TXT",
         payload: data
     }
 }
@@ -24,7 +23,7 @@ export const dataOfCity = (data) => {
 const reducer = (state = initialState, action) => {
     switch(action.type){
         case "UPDATE_DATA":
-            let namecell = action.payload.fromCity[0] + action.payload.fromCity[1] + action.payload.fromCity[2];
+            let namecell = action.payload.fromCity.city + action.payload.fromCity.year + action.payload.fromCity.title;
             // let namecellfrom = state.cityName[0] + state.cityName[1] + state.cityName[2];
             
             // console.log(state.cityName); // Kyiv 2018 XX
@@ -36,18 +35,23 @@ const reducer = (state = initialState, action) => {
             dataJsn: [...state.dataJsn, {...action.payload.newUser, namecell: namecell}]
         }
 
-        // return action.payload.fromCity === city ? {
-        //     ...state,
-        //     dataJsn: state.dataJsn.map((cont, i) => i === numer ?
-        //         [...cont, action.payload.newUser]
-        //      : cont )
-        // } : undefined
-
-        case "CITY_NAME":
-        return {
-            ...state,
-            cityName: action.payload
-        }
+        case "UPDATE_TXT":
+            // dataTxt: {...state.dataTxt, Kyivska: {...state.dataTxt.Kyivska, id: action.payload.id}}
+            return {
+                ...state,
+                dataTxt: {...state.dataTxt,
+                    [action.payload.fromCity.city]: {...state.dataTxt[action.payload.fromCity.city], G:
+                        {...state.dataTxt[action.payload.fromCity.city].G, [action.payload.fromCity.year]:
+                            {...state.dataTxt[action.payload.fromCity.city].G[action.payload.fromCity.year],
+                                [action.payload.fromCity.title]:
+                                {...state.dataTxt[action.payload.fromCity.city].G[action.payload.fromCity.year][action.payload.fromCity.title],
+                                    id: action.payload.id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         
         default: return state;
     }
