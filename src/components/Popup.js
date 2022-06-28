@@ -47,11 +47,6 @@ function Popup(props){
         setCityTitle(JSON.parse(localStorage.getItem("cityName")));
     }, []);
 
-    useEffect(() => {
-        localStorage.setItem("dataTxt", JSON.stringify(props.txtData));
-        localStorage.setItem("dataJsn", JSON.stringify(props.dataJsn));
-    }, [props.txtData, props.dataJsn]);
-
     const addUserData = (e) => {
         e.preventDefault();
         const fName = e.target.getAttribute("name");
@@ -89,7 +84,6 @@ function Popup(props){
     const submitUser = (e) => {
         e.preventDefault();
 
-        console.log(userData);
         if(isNaN(userData.id)){
             setUserData({id: 1});
         }
@@ -118,26 +112,27 @@ function Popup(props){
             while(numInArray.includes(newUser.id)){
             newUser.id++;
             }
-            console.log(newUser.id);
         }
-
-        // keep data in localStorage
-        localStorage.setItem("newUser", JSON.stringify(newUser));
         
         props.userData({
             fromCity: JSON.parse(localStorage.getItem("cityName")),
-            newUser: JSON.parse(localStorage.getItem("newUser"))
+            newUser: newUser
         });
 
         props.dataTxt({
             fromCity: JSON.parse(localStorage.getItem("cityName")),
-            id: JSON.parse(localStorage.getItem("newUser")).id
+            id: newUser.id
         });
     }
 
     const toClose = () => {
         window.close();
     }
+
+    useEffect(() => {
+        localStorage.setItem("dataJsn", JSON.stringify(props.dataJsn));
+        localStorage.setItem("dataTxt", JSON.stringify(props.txtData));
+    }, [props.txtData, props.dataJsn]);
 
     return(
         <div className="popup">
@@ -163,7 +158,10 @@ function Popup(props){
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        { props.dataJsn.map((key) => (
+                        {props.dataJsn.filter((x) =>
+                            x.namecell === undefined ||
+                            x.namecell === `${cityTitle.city}${cityTitle.year}${cityTitle.title}`)
+                        .map((key) => (
                         <StyledTableRow key={key.id}>
                             <TableCell component="th" scope="row">{key.id}</TableCell>
 

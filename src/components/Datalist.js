@@ -31,12 +31,10 @@ function Datalist(props){
         year: "",
         title: ""
     });
-
+    
     useEffect(() => {
         localStorage.setItem("cityName", JSON.stringify(arrCell));
-        localStorage.setItem("dataTxt", JSON.stringify(props.txtData));
-        localStorage.setItem("dataJsn", JSON.stringify(props.dataJsn));
-    }, [props.txtData, props.dataJsn, arrCell]);
+    }, [arrCell]);
 
     const handleDataCell = (city, year, title) => {
         const newValue = { ...arrCell };
@@ -47,7 +45,7 @@ function Datalist(props){
         setArrCell(newValue);
         
         let windowBehavior = window.open("/popup",
-            "rating",
+            "_blank",
             "status=no,location=no,left=200,top=100,width=900,height=700,scrollbars=yes"
         );
         windowBehavior.focus();
@@ -132,11 +130,9 @@ function Datalist(props){
                                             <span><b>Value:</b> {props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].value}</span>
                                             <span><b>Date:</b></span>
                                             <span>{props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].dateRelease}</span>
-
-                                            <span>{props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].id}</span>
-                                            {  }
-                                            {/* {JSON.parse(localStorage.getItem("dataTxt"))[key].G[y] === undefined ?
-                                            <span className='idColor'><b>Id:</b></span> : undefined} */}
+                                            {props.txtData[key].G[y] === undefined ? "-" : props.txtData[key].G[y][x].id === undefined ? undefined :
+                                                <span className='idColor'><b>Id: {props.txtData[key].G[y][x].id}</b></span>
+                                            }
                                         </TableCell>
                                     )
                                 )}
